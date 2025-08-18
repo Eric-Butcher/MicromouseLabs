@@ -1,10 +1,7 @@
-package com.micromouselab.maze;
-
-import java.util.Arrays;
+package com.micromouselab.mazes;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class MazeApplication {

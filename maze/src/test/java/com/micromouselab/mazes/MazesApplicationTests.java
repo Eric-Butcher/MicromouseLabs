@@ -1,10 +1,12 @@
-package com.micromouselab.maze;
+package com.micromouselab.mazes;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-class MazeApplicationTests {
+@ActiveProfiles("test")
+class MazesApplicationTests {
 
 	@Test
 	void contextLoads() {
