@@ -1,17 +1,12 @@
 package com.micromouselab.mazes;
 
 
-public class MazeDTO {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    private final Long id;
-    private final String condensedFormatString;
-
-    public MazeDTO(Long id, String condensedFormatString) {
-        this.id = id;
-        this.condensedFormatString = condensedFormatString;
-    }
-
-    public String convertToASCIIGridFormat() {
-        return "This should have been converted to the ASCII grid format: " + this.condensedFormatString;
-    }
-}
+public record MazeDTO (
+    Long id,
+    String description,
+    String representation,
+    MazeFormat mazeFormat
+) {}

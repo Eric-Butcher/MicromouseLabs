@@ -5,11 +5,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class MazeMapper {
 
-    public MazeDTO mapTo(MazeEntity mazeEntity){
+
+
+    public static MazeDTO mapToDTO(MazeEntity mazeEntity){
         return null;
     }
 
-    public MazeEntity mapFrom(MazeDTO mazeDTO){
+    public static MazeDTO mapToDTOWithMazeFormat(MazeEntity mazeEntity, MazeFormat mazeFormat){
+        return null;
+    }
+
+    public static MazeEntity mapToEntity(MazeDTO mazeDTO){
         return null;
     }
 }

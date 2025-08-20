@@ -1,7 +1,7 @@
 package com.micromouselab.mazes;
 
 public enum MazeFormat {
-    CONDENSED,
+    B64_DIGEST,
+    HEX_DIGEST,
     ASCII_GRID;
-
 }
