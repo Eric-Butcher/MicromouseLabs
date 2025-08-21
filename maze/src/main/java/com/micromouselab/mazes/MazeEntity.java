@@ -17,29 +17,27 @@ public class MazeEntity {
 
     @NotNull
     @NotBlank
-    private String rawRepresentation;
+    private String base64Representation;
 
     private String description;
-
-    private MazeFormat mazeFormat;
 
     protected MazeEntity() {}
 
     public MazeEntity(String rawRepresentation){
-        this.rawRepresentation = rawRepresentation;
+        this.base64Representation = rawRepresentation;
     }
 
-    public  MazeEntity(String rawRepresentation, String description){
-        this.rawRepresentation = rawRepresentation;
+    public MazeEntity(String rawRepresentation, String description){
+        this.base64Representation = rawRepresentation;
         this.description = description;
-        this.mazeFormat = MazeFormat.B64_DIGEST;
     }
 
-    public  MazeEntity(String rawRepresentation, String description, MazeFormat mazeFormat){
-        this.rawRepresentation = rawRepresentation;
+    public MazeEntity(Long id, String rawRepresentation, String description){
+        this.id = id;
+        this.base64Representation = rawRepresentation;
         this.description = description;
-        this.mazeFormat = mazeFormat;
     }
+
 
     public Long getId(){
         return this.id;
@@ -48,24 +46,18 @@ public class MazeEntity {
     public String getDescription() {return this.description;}
 
     public String getRawRepresentation(){
-        return this.rawRepresentation;
+        return this.base64Representation;
     }
 
-    public MazeFormat getMazeFormat(){
-        return this.mazeFormat;
-    }
 
     public void setId(Long id){
         this.id = id;
     }
 
     public void setRawRepresentation(String rawRepresentation){
-        this.rawRepresentation = rawRepresentation;
+        this.base64Representation = rawRepresentation;
     }
 
-    public void setMazeFormat(MazeFormat mazeFormat){
-        this.mazeFormat = mazeFormat;
-    }
 
 
 
