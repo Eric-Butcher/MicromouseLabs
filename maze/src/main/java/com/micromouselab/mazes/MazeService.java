@@ -14,27 +14,35 @@ public class MazeService {
         this.mazeRepository = mazeRepository;
     }
 
-    MazeDTO save(MazeDTO mazeDTO){
-        return null;
+    MazeDTO save(MazeCreateDTO mazeCreateDTO){
+        MazeEntity mazeEntity = MazeMapper.mapToEntity(mazeCreateDTO);
+        MazeEntity created = this.mazeRepository.save(mazeEntity);
+        return MazeMapper.mapToDTO(created);
     }
 
     Optional<MazeDTO> findById(Long id){
-        return null;
+        Optional<MazeEntity> optionalMazeEntity =  this.mazeRepository.findById(id);
+        if (optionalMazeEntity.isPresent()){
+            MazeEntity mazeEntity = optionalMazeEntity.get();
+            MazeDTO mazeDTO = MazeMapper.mapToDTO(mazeEntity);
+            return Optional.of(mazeDTO);
+        }
+        return Optional.empty();
     }
 
 
     boolean existsById(Long id){
-        return id == 0L;
+        return this.mazeRepository.existsById(id);
     }
 
 
     Iterable<MazeDTO> findAll(){
-        return null;
+        return this.mazeRepository.findAll().stream().map(MazeMapper::mapToDTO).toList();
     }
 
 
 
     void delete(Long id){
-        return;
+        this.mazeRepository.deleteById(id);
     }
 }

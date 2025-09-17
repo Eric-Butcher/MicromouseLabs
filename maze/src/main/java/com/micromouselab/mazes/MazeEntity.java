@@ -1,10 +1,6 @@
 package com.micromouselab.mazes;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -17,24 +13,25 @@ public class MazeEntity {
 
     @NotNull
     @NotBlank
+    @Column(length = 512) // (maze_rows * maze_height) * base64increaseFactor = (16 * 16) * 1.4 = 358.4 => 512
     private String base64Representation;
 
     private String description;
 
     protected MazeEntity() {}
 
-    public MazeEntity(String rawRepresentation){
-        this.base64Representation = rawRepresentation;
+    public MazeEntity(String base64Representation){
+        this.base64Representation = base64Representation;
     }
 
-    public MazeEntity(String rawRepresentation, String description){
-        this.base64Representation = rawRepresentation;
+    public MazeEntity(String base64Representation, String description){
+        this.base64Representation = base64Representation;
         this.description = description;
     }
 
-    public MazeEntity(Long id, String rawRepresentation, String description){
+    public MazeEntity(Long id, String base64Representation, String description){
         this.id = id;
-        this.base64Representation = rawRepresentation;
+        this.base64Representation = base64Representation;
         this.description = description;
     }
 
@@ -54,8 +51,8 @@ public class MazeEntity {
         this.id = id;
     }
 
-    public void setRawRepresentation(String rawRepresentation){
-        this.base64Representation = rawRepresentation;
+    public void setRawRepresentation(String base64Representation){
+        this.base64Representation = base64Representation;
     }
 
 

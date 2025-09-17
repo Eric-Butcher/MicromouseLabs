@@ -39,20 +39,20 @@ public class MazeController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public void save(@RequestBody MazeDTO mazeDTO){
-        this.mazeService.save(mazeDTO);
+    public void save(@RequestBody MazeCreateDTO mazeCreateDTO){
+        this.mazeService.save(mazeCreateDTO);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/{mazeId}")
-    public void update(@RequestBody MazeDTO maze, @PathVariable Long mazeId){
-
-        if (!mazeService.existsById(mazeId)){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found!");
-        }
-
-        mazeService.save(maze);
-    }
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    @PutMapping("/{mazeId}")
+//    public void update(@RequestBody MazeDTO maze){
+//
+//        if (!mazeService.existsById(maze.id())){
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Content not found!");
+//        }
+//
+//        mazeService.update(maze);
+//    }
 
     @DeleteMapping("/{mazeId}")
     public void delete(@PathVariable Long mazeId){
