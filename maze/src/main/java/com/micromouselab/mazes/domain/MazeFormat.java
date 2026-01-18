@@ -1,4 +1,4 @@
-package com.micromouselab.mazes;
+package com.micromouselab.mazes.domain;
 
 public enum MazeFormat {
     B64_DIGEST,

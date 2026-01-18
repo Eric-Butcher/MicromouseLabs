@@ -1,4 +1,4 @@
-package com.micromouselab.mazes;
+package com.micromouselab.mazes.domain;
 
 import java.util.Base64;
 import java.util.HexFormat;

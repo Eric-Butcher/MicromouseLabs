@@ -1,10 +1,5 @@
-package com.micromouselab.mazes;
+package com.micromouselab.mazes.domain;
 
-
-import org.hibernate.annotations.NotFound;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -1,5 +1,11 @@
-package com.micromouselab.mazes;
+package com.micromouselab.mazes.service;
 
+import com.micromouselab.mazes.domain.InvalidMicroMouseMazeException;
+import com.micromouselab.mazes.domain.Maze;
+import com.micromouselab.mazes.domain.MazeCreateDTO;
+import com.micromouselab.mazes.domain.MazeDTO;
+import com.micromouselab.mazes.domain.MazeEntity;
+import com.micromouselab.mazes.repository.MazeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,7 +19,7 @@ public class MazeService {
         this.mazeRepository = mazeRepository;
     }
 
-    MazeDTO save(MazeCreateDTO mazeCreateDTO) throws InvalidMicroMouseMazeException {
+    public MazeDTO save(MazeCreateDTO mazeCreateDTO) throws InvalidMicroMouseMazeException {
         Maze maze = MazeMapper.mapToMaze(mazeCreateDTO);
         if (maze.isValidMicromouseMaze()){
             MazeEntity mazeEntity = MazeMapper.mapToMazeEntity(maze);
@@ -25,7 +31,7 @@ public class MazeService {
 
     }
 
-    Optional<MazeDTO> findById(Long id){
+    public Optional<MazeDTO> findById(Long id){
         Optional<MazeEntity> optionalMazeEntity =  this.mazeRepository.findById(id);
         if (optionalMazeEntity.isPresent()){
             MazeEntity mazeEntity = optionalMazeEntity.get();
@@ -36,18 +42,18 @@ public class MazeService {
     }
 
 
-    boolean existsById(Long id){
+    public boolean existsById(Long id){
         return this.mazeRepository.existsById(id);
     }
 
 
-    Iterable<MazeDTO> findAll(){
+    public Iterable<MazeDTO> findAll(){
         return this.mazeRepository.findAll().stream().map(MazeMapper::mapToDTO).toList();
     }
 
 
 
-    void delete(Long id){
+    public void delete(Long id){
         this.mazeRepository.deleteById(id);
     }
 }

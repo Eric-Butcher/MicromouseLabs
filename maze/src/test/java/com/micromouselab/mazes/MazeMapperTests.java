@@ -1,5 +1,8 @@
 package com.micromouselab.mazes;
 
+import com.micromouselab.mazes.domain.*;
+import com.micromouselab.mazes.domain.MazeEntity;
+import com.micromouselab.mazes.service.MazeMapper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

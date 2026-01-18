@@ -1,4 +1,4 @@
-package com.micromouselab.mazes;
+package com.micromouselab.mazes.domain;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

@@ -1,5 +1,6 @@
-package com.micromouselab.mazes;
+package com.micromouselab.mazes.service;
 
+import com.micromouselab.mazes.domain.*;
 import org.springframework.stereotype.Component;
 
 @Component

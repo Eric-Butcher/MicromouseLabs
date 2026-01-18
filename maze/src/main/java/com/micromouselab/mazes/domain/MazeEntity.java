@@ -1,4 +1,4 @@
-package com.micromouselab.mazes;
+package com.micromouselab.mazes.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
