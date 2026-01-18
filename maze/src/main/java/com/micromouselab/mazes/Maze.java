@@ -1,10 +1,11 @@
 package com.micromouselab.mazes;
 
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.HexFormat;
+import java.util.LinkedList;
+import java.util.Queue;
 
-public class MazeGrid {
+public class Maze {
 
     private final int MICROMOUSE_MAZE_LENGTH = 16;
     private final int MICROMOUSE_MAZE_SIZE = MICROMOUSE_MAZE_LENGTH * MICROMOUSE_MAZE_LENGTH;
@@ -23,17 +24,24 @@ public class MazeGrid {
     private final String EMPTY_VERTICAL_WALL = "     ";
 
 
-    private MazeCell[][] grid;
+    private MazeCell[][] mazeGrid;
 
     private final MazeFormat mazeFormat;
 
-    public MazeGrid(String representation, MazeFormat mazeFormat){
-        this.grid = switch (mazeFormat) {
-            case B64_DIGEST -> createGridFromB64DigestFormat(representation);
-            case HEX_DIGEST -> createGridFromHexDigestFormat(representation);
-            case ASCII_GRID -> createGridFromASCIIGridFormat(representation);
-        };
+    private final String description;
+
+    public Maze(String representation, MazeFormat mazeFormat, String description) throws InvalidMicroMouseMazeException {
+        try {
+            this.mazeGrid = switch (mazeFormat) {
+                case B64_DIGEST -> createGridFromB64DigestFormat(representation);
+                case HEX_DIGEST -> createGridFromHexDigestFormat(representation);
+                case ASCII_GRID -> createGridFromASCIIGridFormat(representation);
+            };
+        } catch (IllegalArgumentException e) {
+            throw new InvalidMicroMouseMazeException("Maze format was not valid");
+        }
         this.mazeFormat = mazeFormat;
+        this.description = description;
     }
 
     private MazeCell[][] createGridFromB64DigestFormat(String representation) throws IllegalArgumentException {
@@ -59,6 +67,27 @@ public class MazeGrid {
             int columnIndex = i % MICROMOUSE_MAZE_LENGTH;
 
             newGrid[rowIndex][columnIndex] = MazeCell.fromByte(byteArray[i]);
+        }
+
+        // check consistency of walls between adjacent cells
+        for (int rowIndex = 0; rowIndex < MICROMOUSE_MAZE_LENGTH; rowIndex++){
+            for (int columnIndex = 0; columnIndex < MICROMOUSE_MAZE_LENGTH; columnIndex++){
+                MazeCell currentCell = newGrid[rowIndex][columnIndex];
+
+                if (columnIndex < MICROMOUSE_MAZE_LENGTH - 1){
+                    MazeCell eastCell = newGrid[rowIndex][columnIndex + 1];
+                    if (currentCell.eastWall() != eastCell.westWall()){
+                        throw new IllegalArgumentException("Inconsistent wall definitions between adjacent cells.");
+                    }
+                }
+
+                if (rowIndex < MICROMOUSE_MAZE_LENGTH - 1){
+                    MazeCell southCell = newGrid[rowIndex + 1][columnIndex];
+                    if (currentCell.southWall() != southCell.northWall()){
+                        throw new IllegalArgumentException("Inconsistent wall definitions between adjacent cells.");
+                    }
+                }
+            }
         }
 
         return newGrid;
@@ -167,14 +196,122 @@ public class MazeGrid {
         };
     }
 
+    public String getDescription(){
+        return this.description;
+    }
+
+    public boolean isValidMicromouseMaze(){
+        if (this.mazeGrid.length != MICROMOUSE_MAZE_LENGTH){
+            return false;
+        }
+        for (MazeCell[] row : this.mazeGrid){
+            if (row.length != MICROMOUSE_MAZE_LENGTH){
+                return false;
+            }
+        }
+
+        if (!allOuterWallsArePresent()){
+            return false;
+        }
+
+        if (solvableWithLeftWallFollower()){
+            return false;
+        }
+
+        if (solvableWithRightWallFollower()){
+            return false;
+        }
+
+
+        if (!allCellsAreReachable()){
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean allOuterWallsArePresent(){
+        for (int i = 0; i < MICROMOUSE_MAZE_LENGTH; i++){
+            if (!this.mazeGrid[0][i].northWall()){
+                return false;
+            }
+            if (!this.mazeGrid[MICROMOUSE_MAZE_LENGTH - 1][i].southWall()){
+                return false;
+            }
+            if (!this.mazeGrid[i][0].westWall()){
+                return false;
+            }
+            if (!this.mazeGrid[i][MICROMOUSE_MAZE_LENGTH - 1].eastWall()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean solvableWithLeftWallFollower(){  
+        // TODO
+        return false;
+    }
+
+    private boolean solvableWithRightWallFollower(){
+        // TODO
+        return false;
+    }
+
+    private boolean allCellsAreReachable(){
+        final class CellPosition {
+            int row;
+            int column;
+
+            CellPosition(int row, int column){
+                this.row = row;
+                this.column = column;
+            }
+        }
+
+        // Check that every cell is reachable from every other cell (BFS)
+        boolean[][] visited_matrix = new boolean[MICROMOUSE_MAZE_LENGTH][MICROMOUSE_MAZE_LENGTH];
+        int visited_number = 0;
+        Queue<CellPosition> queue = new LinkedList<>();
+        queue.add(new CellPosition(0, 0));
+        visited_matrix[0][0] = true;
+        visited_number++;
+        while (!queue.isEmpty()){
+            CellPosition current_cell_position = queue.poll();
+            MazeCell current_cell = this.mazeGrid[current_cell_position.row][current_cell_position.column];
+            if (current_cell.northWall() == false && !visited_matrix[current_cell_position.row - 1][current_cell_position.column]){
+                queue.add(new CellPosition(current_cell_position.row - 1, current_cell_position.column));
+                visited_matrix[current_cell_position.row - 1][current_cell_position.column] = true;
+                visited_number++;
+            }
+            if (current_cell.eastWall() == false && !visited_matrix[current_cell_position.row][current_cell_position.column + 1]){
+                queue.add(new CellPosition(current_cell_position.row, current_cell_position.column + 1));
+                visited_matrix[current_cell_position.row][current_cell_position.column + 1] = true;
+                visited_number++;
+            }
+            if (current_cell.southWall() == false && !visited_matrix[current_cell_position.row + 1][current_cell_position.column]){
+                queue.add(new CellPosition(current_cell_position.row + 1, current_cell_position.column));
+                visited_matrix[current_cell_position.row + 1][current_cell_position.column] = true;
+                visited_number++;
+            }
+            if (current_cell.westWall() == false && !visited_matrix[current_cell_position.row][current_cell_position.column - 1]){
+                queue.add(new CellPosition(current_cell_position.row, current_cell_position.column - 1));
+                visited_matrix[current_cell_position.row][current_cell_position.column - 1] = true;
+                visited_number++;
+            }
+        }
+        return visited_number == MICROMOUSE_MAZE_SIZE;
+            
+    }
+
     private String getRepresentationAsBase64Format(){
-        byte[] byteArray = this.cellGridToByteArray(this.grid);
+        byte[] byteArray = this.cellGridToByteArray(this.mazeGrid);
         String base64EncodedString = Base64.getEncoder().encodeToString(byteArray);
         return base64EncodedString;
     }
 
     private String getRepresentationAsHexFormat(){
-        byte[] byteArray = this.cellGridToByteArray(this.grid);
+        byte[] byteArray = this.cellGridToByteArray(this.mazeGrid);
         String hexEncodedString = HexFormat.of().formatHex(byteArray);
         return hexEncodedString;
     }
@@ -182,7 +319,7 @@ public class MazeGrid {
     private byte[] cellGridToByteArray(MazeCell[][] mazeCells){
         byte[] byteArray = new byte[MICROMOUSE_MAZE_SIZE];
         int i = 0;
-        for (MazeCell[] cellRow : this.grid){
+        for (MazeCell[] cellRow : this.mazeGrid){
             for (MazeCell cell : cellRow){
                 byteArray[i] = cell.toByte();
                 i++;
@@ -197,7 +334,7 @@ public class MazeGrid {
         int expectedASCIIGridSize = (expectedRowLength * expectedColumnLength) + expectedColumnLength;
         StringBuilder sb = new StringBuilder(expectedASCIIGridSize);
 
-        for (MazeCell[] row : this.grid) {
+        for (MazeCell[] row : this.mazeGrid) {
             for (MazeCell mazeCell : row) {
                 sb.append(mazeCell.northWall() ? "+---" : "+   ");
             }
@@ -210,7 +347,7 @@ public class MazeGrid {
             sb.append(lastMazeCellInRow.eastWall() ? "|\n" : " \n");
         }
 
-        MazeCell[] lastRow = this.grid[this.grid.length-1];
+        MazeCell[] lastRow = this.mazeGrid[this.mazeGrid.length-1];
         for (MazeCell mazeCell : lastRow) {
             sb.append(mazeCell.southWall() ? "+---" : "+   ");
         }
@@ -218,6 +355,7 @@ public class MazeGrid {
 
         return sb.toString();
     }
+
 
 
 }

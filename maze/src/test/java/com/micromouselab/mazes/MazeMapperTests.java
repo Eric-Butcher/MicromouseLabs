@@ -98,29 +98,33 @@ public class MazeMapperTests {
 
 
     @Test
-    void testMapToEntity(){
-        MazeDTO mazeDTO = new MazeDTO(id, description, base64digest, MazeFormat.B64_DIGEST);
+    void testMapToMaze(){
+        MazeCreateDTO mazeDTO = new MazeCreateDTO(description, base64digest, MazeFormat.B64_DIGEST);
 
-        MazeEntity mazeEntity = MazeMapper.mapToEntity(mazeDTO);
+        Maze maze = MazeMapper.mapToMaze(mazeDTO);
 
-        assertEquals(mazeDTO.id(), mazeEntity.getId());
+        assertEquals(mazeDTO.description(), maze.getDescription());
+        assertEquals(mazeDTO.representation(), maze.getRepresentation(MazeFormat.B64_DIGEST));
     }
 
     @Test
     void testMapToEntitySavesRepresentationAsB64DigestWhenDTOWasB64Digest(){
-        MazeDTO mazeDTO = new MazeDTO(id, description, base64digest, MazeFormat.B64_DIGEST);
+        MazeCreateDTO mazeDTO = new MazeCreateDTO(description, base64digest, MazeFormat.B64_DIGEST);
 
-        MazeEntity mazeEntity = MazeMapper.mapToEntity(mazeDTO);
+        Maze maze = MazeMapper.mapToMaze(mazeDTO);
+        MazeEntity mazeEntity = MazeMapper.mapToMazeEntity(maze);
 
-        assertEquals(base64digest, mazeEntity.getRawRepresentation());
+        assertEquals(mazeDTO.description(), mazeEntity.getDescription());
+        assertEquals(mazeDTO.representation(), mazeEntity.getRawRepresentation());
 
     }
 
     @Test
     void testMapToEntitySavesRepresentationAsB64DigestWhenDTOWasHexDigest(){
-        MazeDTO mazeDTO = new MazeDTO(id, description, hexDigest, MazeFormat.HEX_DIGEST);
+        MazeCreateDTO mazeDTO = new MazeCreateDTO(description, hexDigest, MazeFormat.HEX_DIGEST);
 
-        MazeEntity mazeEntity = MazeMapper.mapToEntity(mazeDTO);
+        Maze maze = MazeMapper.mapToMaze(mazeDTO);
+        MazeEntity mazeEntity = MazeMapper.mapToMazeEntity(maze);
 
         assertEquals(base64digest, mazeEntity.getRawRepresentation());
 
@@ -130,7 +134,12 @@ public class MazeMapperTests {
 
     @Test
     void testMapToEntitySavesRepresentationAsB64DigestWhenDTOWasASCIIGrid(){
-            
+            MazeCreateDTO mazeDTO = new MazeCreateDTO(description, asciiGrid, MazeFormat.ASCII_GRID);
+
+            Maze maze = MazeMapper.mapToMaze(mazeDTO);
+            MazeEntity mazeEntity = MazeMapper.mapToMazeEntity(maze);
+
+            assertEquals(base64digest, mazeEntity.getRawRepresentation());
     }
 
 }

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import jakarta.validation.Valid;
+
 
 
 @RestController
@@ -39,7 +41,7 @@ public class MazeController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public void save(@RequestBody MazeCreateDTO mazeCreateDTO){
+    public void save(@Valid @RequestBody MazeCreateDTO mazeCreateDTO){
         this.mazeService.save(mazeCreateDTO);
     }
 

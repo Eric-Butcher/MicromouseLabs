@@ -2,7 +2,6 @@ package com.micromouselab.mazes;
 
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -14,10 +13,16 @@ public class MazeService {
         this.mazeRepository = mazeRepository;
     }
 
-    MazeDTO save(MazeCreateDTO mazeCreateDTO){
-        MazeEntity mazeEntity = MazeMapper.mapToEntity(mazeCreateDTO);
-        MazeEntity created = this.mazeRepository.save(mazeEntity);
-        return MazeMapper.mapToDTO(created);
+    MazeDTO save(MazeCreateDTO mazeCreateDTO) throws InvalidMicroMouseMazeException {
+        Maze maze = MazeMapper.mapToMaze(mazeCreateDTO);
+        if (maze.isValidMicromouseMaze()){
+            MazeEntity mazeEntity = MazeMapper.mapToMazeEntity(maze);
+            MazeEntity savedMazeEntity = this.mazeRepository.save(mazeEntity);
+            MazeDTO mazeDTO = MazeMapper.mapToDTO(savedMazeEntity);
+            return mazeDTO;
+        }
+        throw new InvalidMicroMouseMazeException("Not a MicroMouse maze");
+
     }
 
     Optional<MazeDTO> findById(Long id){
