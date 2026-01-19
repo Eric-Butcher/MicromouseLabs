@@ -43,8 +43,8 @@ public class MazeController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public void save(@Valid @RequestBody MazeCreateDTO mazeCreateDTO){
-        this.mazeService.save(mazeCreateDTO);
+    public MazeDTO save(@Valid @RequestBody MazeCreateDTO mazeCreateDTO){
+        return this.mazeService.save(mazeCreateDTO);
     }
 
 //    @ResponseStatus(HttpStatus.NO_CONTENT)
