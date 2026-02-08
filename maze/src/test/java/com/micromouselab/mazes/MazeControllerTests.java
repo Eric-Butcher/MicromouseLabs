@@ -29,7 +29,7 @@ import java.util.stream.StreamSupport;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 public class MazeControllerTests {
 
@@ -73,7 +73,7 @@ public class MazeControllerTests {
         this.initializeTestMazes();
 
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/mazes")
+                MockMvcRequestBuilders.get("/api/v1/mazes")
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -94,7 +94,7 @@ public class MazeControllerTests {
     @Test
     public void testFindAllMazesReturnNothingWhenNoMazesExist() throws Exception {
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/mazes")
+                MockMvcRequestBuilders.get("/api/v1/mazes")
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -112,7 +112,7 @@ public class MazeControllerTests {
         MazeEntity mazeEntity = this.mazeRepository.findAll().get(0);
 
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/mazes/" + mazeEntity.getId())
+                MockMvcRequestBuilders.get("/api/v1/mazes/" + mazeEntity.getId())
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -122,7 +122,7 @@ public class MazeControllerTests {
     @Test
     public void testFindByIdReturnsHTTTP404WhenMazeDoesNotExist() throws Exception {
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/mazes/999")
+                MockMvcRequestBuilders.get("/api/v1/mazes/999")
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -134,7 +134,7 @@ public class MazeControllerTests {
         String mazeJson = objectMapper.writeValueAsString(mazeDTO);
 
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/mazes")
+                MockMvcRequestBuilders.post("/api/v1/mazes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mazeJson)
         );
@@ -162,7 +162,7 @@ public class MazeControllerTests {
         String mazeJson = objectMapper.writeValueAsString(mazeDTO);
 
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/mazes")
+                MockMvcRequestBuilders.post("/api/v1/mazes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mazeJson)
         );
@@ -174,7 +174,7 @@ public class MazeControllerTests {
     public void testDeleteMazeReturns204ForNonExistingMaze() throws Exception {
         
         ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.delete("/mazes/999")
+                MockMvcRequestBuilders.delete("/api/v1/mazes/999")
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -189,7 +189,7 @@ public class MazeControllerTests {
         ResultActions resultActions;
         try {
             resultActions = mockMvc.perform(
-                    MockMvcRequestBuilders.delete("/mazes/" + mazeEntity.getId())
+                    MockMvcRequestBuilders.delete("/api/v1/mazes/" + mazeEntity.getId())
                             .contentType(MediaType.APPLICATION_JSON)
             );
 

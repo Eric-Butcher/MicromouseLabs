@@ -20,7 +20,7 @@ import jakarta.validation.Valid;
 
 
 @RestController
-@RequestMapping(path = "/mazes")
+@RequestMapping(path = "/api/v1/mazes")
 public class MazeController {
 
     private final MazeService mazeService;
