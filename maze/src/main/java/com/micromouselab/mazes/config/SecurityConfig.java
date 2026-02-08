@@ -35,8 +35,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/v1/auth/**").permitAll()
-                    .requestMatchers("/api/v1/mazes/**").hasRole(Role.APPROVED.toString())
-                    .requestMatchers("/api/v1/users/**").hasRole(Role.ADMIN.toString())
+                    .requestMatchers("/api/v1/mazes", "/api/v1/mazes/**").hasAnyRole(Role.ADMIN.toString(), Role.APPROVED.toString())
+                    .requestMatchers("/api/v1/users", "/api/v1/users/**").hasRole(Role.ADMIN.toString())
                     .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

@@ -3,6 +3,7 @@ package com.micromouselab.mazes.service;
 import com.micromouselab.mazes.controller.AuthController;
 import com.micromouselab.mazes.domain.AuthResponseDTO;
 import com.micromouselab.mazes.domain.RegisterDTO;
+import com.micromouselab.mazes.domain.Role;
 import com.micromouselab.mazes.domain.User;
 import com.micromouselab.mazes.repository.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -12,6 +13,8 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,10 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AuthService {
@@ -82,7 +82,16 @@ public class AuthService {
 
         Date currentTime = new Date();
         Date expiryTime = new Date(currentTime.getTime() + jwtDurationMs);
-        return Jwts.builder().subject(userDetails.getUsername()).issuedAt(currentTime).expiration(expiryTime).signWith(this.secretKey, Jwts.SIG.HS256).compact();
+        String role = userDetails.getAuthorities().stream().findFirst().map(GrantedAuthority::getAuthority).orElseThrow();
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role);
+        return Jwts.builder()
+                .claims(claims)
+                .subject(userDetails.getUsername())
+                .issuedAt(currentTime)
+                .expiration(expiryTime)
+                .signWith(this.secretKey, Jwts.SIG.HS256)
+                .compact();
     }
 
     public String generateRefreshToken(UserDetails userDetails){
@@ -100,13 +109,32 @@ public class AuthService {
                 .compact();
     }
 
+//    public UserDetails validateToken(String jwt) throws IllegalArgumentException {
+//        Optional<String> username = extractUsernameFromJwt(jwt);
+//        if (username.isPresent()){
+//            return userDetailsService.loadUserByUsername(username.get());
+//        }
+//        throw new IllegalArgumentException("Could not validate username with jwt.");
+//    }
+
     public UserDetails validateToken(String jwt) throws IllegalArgumentException {
-        Optional<String> username = extractUsernameFromJwt(jwt);
-        if (username.isPresent()){
-            return userDetailsService.loadUserByUsername(username.get());
-        }
-        throw new IllegalArgumentException("Could not validate username with jwt.");
+        Claims claims = Jwts.parser()
+                .verifyWith(this.secretKey)
+                .build()
+                .parseSignedClaims(jwt)
+                .getPayload();
+
+        String username = claims.getSubject();
+        String role = claims.get("role", String.class);
+
+        return new org.springframework.security.core.userdetails.User(
+                username,
+                "",
+                List.of(new SimpleGrantedAuthority(role))
+        );
     }
+
+
 
     private Optional<String> extractUsernameFromJwt(String jwt){
         return Optional.ofNullable(Jwts.parser().verifyWith(this.secretKey).build().parseSignedClaims(jwt).getPayload().getSubject());
