@@ -1,10 +1,6 @@
 package com.micromouselab.mazes.service;
 
-import com.micromouselab.mazes.domain.InvalidMicroMouseMazeException;
-import com.micromouselab.mazes.domain.Maze;
-import com.micromouselab.mazes.domain.MazeCreateDTO;
-import com.micromouselab.mazes.domain.MazeDTO;
-import com.micromouselab.mazes.domain.MazeEntity;
+import com.micromouselab.mazes.domain.*;
 import com.micromouselab.mazes.repository.MazeRepository;
 import org.springframework.stereotype.Service;
 
@@ -31,11 +27,11 @@ public class MazeService {
 
     }
 
-    public Optional<MazeDTO> findById(Long id){
-        Optional<MazeEntity> optionalMazeEntity =  this.mazeRepository.findById(id);
+    public Optional<MazeDTO> findById(Long id, MazeFormat mazeFormat){
+        Optional<MazeEntity> optionalMazeEntity = this.mazeRepository.findById(id);
         if (optionalMazeEntity.isPresent()){
             MazeEntity mazeEntity = optionalMazeEntity.get();
-            MazeDTO mazeDTO = MazeMapper.mapToDTO(mazeEntity);
+            MazeDTO mazeDTO = MazeMapper.mapToDTO(mazeEntity, mazeFormat);
             return Optional.of(mazeDTO);
         }
         return Optional.empty();
