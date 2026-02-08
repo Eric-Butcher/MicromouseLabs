@@ -2,10 +2,7 @@ package com.micromouselab.mazes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.micromouselab.mazes.domain.MazeCreateDTO;
-import com.micromouselab.mazes.domain.MazeDTO;
-import com.micromouselab.mazes.domain.MazeFormat;
-import com.micromouselab.mazes.domain.MazeEntity;
+import com.micromouselab.mazes.domain.*;
 import com.micromouselab.mazes.repository.MazeRepository;
 import com.micromouselab.mazes.service.MazeService;
 import org.junit.jupiter.api.Test;
@@ -20,6 +17,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
@@ -200,6 +198,42 @@ public class MazeControllerTests {
 
         boolean mazeExists = this.mazeRepository.existsById(mazeEntity.getId());
         assertFalse(mazeExists);
+    }
+
+    @Test
+    public void testCanSpecifyMazeFormatAndReturnDesiredFormat() throws Exception {
+
+        MazeEntity mazeEntity1 = new MazeEntity(null, MazeTestConstants.maze1Base64Digest, "Maze 1");
+        MazeEntity savedEntity = this.mazeRepository.save(mazeEntity1);
+
+        String responseToGetBase64 = mockMvc.perform(get("/api/v1/mazes/" + savedEntity.getId() + "?format=" + MazeFormat.B64_DIGEST.toString()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        MazeDTO b64FormatMazeDTO = objectMapper.readValue(responseToGetBase64, MazeDTO.class);
+        assertEquals(MazeTestConstants.maze1Base64Digest, b64FormatMazeDTO.representation());
+        assertEquals(MazeFormat.B64_DIGEST, b64FormatMazeDTO.mazeFormat());
+
+        String responseToGetHexDigest = mockMvc.perform(get("/api/v1/mazes/" + savedEntity.getId() + "?format=" + MazeFormat.HEX_DIGEST.toString()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        MazeDTO hexDigestFormatMazeDTO = objectMapper.readValue(responseToGetHexDigest, MazeDTO.class);
+        assertEquals(MazeTestConstants.maze1HexDigest.toLowerCase(), hexDigestFormatMazeDTO.representation());
+        assertEquals(MazeFormat.HEX_DIGEST, hexDigestFormatMazeDTO.mazeFormat());
+
+        String responseToGetASCIIGrid = mockMvc.perform(get("/api/v1/mazes/" + savedEntity.getId() + "?format=" + MazeFormat.ASCII_GRID.toString()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        MazeDTO asciiGridFormatMazeDTO = objectMapper.readValue(responseToGetASCIIGrid, MazeDTO.class);
+        assertEquals(MazeTestConstants.maze1ASCIIGrid, asciiGridFormatMazeDTO.representation());
+        assertEquals(MazeFormat.ASCII_GRID, asciiGridFormatMazeDTO.mazeFormat());
+
+
     }
 
 
