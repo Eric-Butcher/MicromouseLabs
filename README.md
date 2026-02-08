@@ -12,7 +12,8 @@ When running the application locally, you can use `./mvnw spring-boot:run`. If d
 
 To deploy is production, you can run the Jar file once it has been compiled: `java -jar target/<jar-file-name>.jar`.
 
-> ![CAUTION] Do not deploy the application in either test or dev profiles in production. Always use a proper production profile with environment variables when deploying to a real server instance that others can access.
+> [!CAUTION] 
+> Do not deploy the application in either test or dev profiles in production. Always use a proper production profile with environment variables when deploying to a real server instance that others can access.
 
 ## Maze Formats
 
@@ -101,7 +102,8 @@ curl -v -X POST http://localhost:8080/api/v1/auth/login \
 Or you can use Postman:
 ![Logging into the authentication endpoint with the default admin credentials from the dev profile using Postman](./images/postman-login.png)
 
-> ![CAUTION] The dev profile uses a default admin account with insecure credentials. Never deploy this application in the dev profile. 
+> [!CAUTION] 
+>The dev profile uses a default admin account with insecure credentials. Never deploy this application in the dev profile. 
 
 This should give you an access token labelled `"accessToken"`. Copy and paste this value. 
 
